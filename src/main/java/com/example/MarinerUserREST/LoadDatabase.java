@@ -6,17 +6,19 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Configuration
 public class LoadDatabase {
     private static final Logger log = LoggerFactory.getLogger(LoadDatabase.class);
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Bean
     CommandLineRunner initDatabase(UserRepository repository) {
         return args -> {
-            log.info("Preloading " + repository.save(new UserObject("Mueller", "Neil", "neil.mueller99@gmail.com", new Date(99, 11, 1),1)));
-            log.info("Preloading " + repository.save(new UserObject("Boyle", "Kyle", "kb@gmail.com", new Date(80, 1, 1),1)));
+            log.info("Preloading " + repository.save(new UserObject("Mueller", "Neil", "neil.mueller99@gmail.com", simpleDateFormat.parse("1999-11-01"),1)));
+            log.info("Preloading " + repository.save(new UserObject("Boyle", "Kyle", "kb@gmail.com", simpleDateFormat.parse("1980-01-01"),1)));
         };
     }
 }

@@ -11,7 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
