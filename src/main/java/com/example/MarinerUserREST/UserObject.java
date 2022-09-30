@@ -1,3 +1,10 @@
+/**
+ * Class to store users
+ * id is a primary key which is automatically set based on Jpa Database
+ * Currently stores family and given names, email, birth date, permission type and date permission granted
+ * Permission type set as int in case more types are added later
+ */
+
 package com.example.MarinerUserREST;
 
 import javax.persistence.Entity;
@@ -15,6 +22,8 @@ public class UserObject {
     private int permissionType;
     private Date permissionGrantedDate;
 
+    public static final int PERMISSIONLEVELZERO = 0;
+    public static final int PERMISSIONLEVELONE = 1;
 
     UserObject() {}
 

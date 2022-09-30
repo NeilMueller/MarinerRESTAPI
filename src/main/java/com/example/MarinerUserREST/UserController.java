@@ -1,11 +1,23 @@
+/**
+ * User controller to handle listing users, adding users, remove users, find user by id,
+ * grant/revoke permissions and find users by familyName
+ * stores users in Jpa repository
+ */
+
 package com.example.MarinerUserREST;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.mediatype.problem.Problem;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +32,11 @@ public class UserController {
         this.assembler = assembler;
     }
 
-    //List Users
+    /**
+     * Method to display all users
+     * Triggered on GET request at endpoint /users
+     * @return Collection of EntityModels of users
+     */
     @GetMapping("/users")
     CollectionModel<EntityModel<UserObject>> all() {
         List<EntityModel<UserObject>> users = repository.findAll().stream()
@@ -30,6 +46,12 @@ public class UserController {
                 linkTo(methodOn(UserController.class).all()).withSelfRel());
     }
 
+    /**
+     * Method to display all users with given family name
+     * Triggered on GET request at endpoint /users/familyName/{familyName}
+     * @param familyName
+     * @return Collection of EntityModels of users
+     */
     //List Users by family name
     @GetMapping("/users/familyName/{familyName}")
     CollectionModel<EntityModel<UserObject>> searchByFamilyName(@PathVariable String familyName) {
@@ -40,14 +62,25 @@ public class UserController {
                 linkTo(methodOn(UserController.class).all()).withSelfRel());
     }
 
-    //Add user
+    /**
+     * Method to add new user from POST request which contains the JSON representation of a user
+     * in the body of the request
+     * @param newUser
+     * @return
+     */
     @PostMapping("/users")
-    UserObject newUser(@RequestBody UserObject newUser){
-        return repository.save(newUser);
+    ResponseEntity<?> newUser(@RequestBody UserObject newUser){
+        EntityModel<UserObject> entityModel = assembler.toModel(repository.save(newUser));
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
-    //Single user methods
-    //Find user by id
+    /**
+     * Find a user from id from a GET request to /users/{id}
+     * @param id
+     * @return EntityModel of user
+     */
     @GetMapping("/users/{id}")
     EntityModel<UserObject> one(@PathVariable Long id) {
         UserObject user = repository.findById(id)
@@ -56,22 +89,63 @@ public class UserController {
         return assembler.toModel(user);
     }
 
-    //UpdateUserPermissions
-    @PutMapping("/users/{id}")
-    UserObject updatePermission(@RequestBody int permissionType, @PathVariable Long id) {
-        return repository.findById(id)
-                .map(userObject -> {
-                    userObject.setPermissionType(permissionType);
-                    Long millis = System.currentTimeMillis();
-                    userObject.setPermissionGrantedDate(new Date(millis));
-                    return repository.save(userObject);
-                })
+    /**
+     * Grants user permission level 1
+     * Only displayed in user Entity when permission level is 0
+     * Returns HTTP 405 Method not allowed if user permission already set to 1
+     * @param id
+     * @return Response entity displaying updated user or HTTP405
+     */
+    @PutMapping("/users/{id}/grant")
+    ResponseEntity<?> grantPermission(@PathVariable Long id) {
+        UserObject user = repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
+        if(user.getPermissionType() == UserObject.PERMISSIONLEVELZERO){
+            user.setPermissionType(UserObject.PERMISSIONLEVELONE);
+            return ResponseEntity.ok(assembler.toModel(repository.save(user)));
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                .body(Problem.create()
+                .withTitle("Method not allowed")
+                .withDetail("User already has permission level " + user.getPermissionType()));
+
     }
 
-    //DeleteUser
-    @DeleteMapping("/users/{id}")
-    void deleteUser(@PathVariable Long id){
+    /**
+     * Revokes user permission, setting permission to 0
+     * Only displayed in user Entity when permission level is not 0
+     * Returns HTTP 405 Method not allowed if user permission already set to 0
+     * @param id
+     * @return Response entity displaying updated user or HTTP405
+     */
+    @PutMapping("/users/{id}/revoke")
+    ResponseEntity<?> revokePermission(@PathVariable Long id) {
+        UserObject user = repository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        if(user.getPermissionType() == UserObject.PERMISSIONLEVELONE){
+            user.setPermissionType(UserObject.PERMISSIONLEVELZERO);
+            return ResponseEntity.ok(assembler.toModel(repository.save(user)));
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                .body(Problem.create()
+                        .withTitle("Method not allowed")
+                        .withDetail("User already has permission level " + user.getPermissionType()));
+    }
+
+    /**
+     * Deletes user with provided id from the Jpa repository
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/users/{id}/delete")
+    ResponseEntity<?> deleteUser(@PathVariable Long id){
         repository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,3 +1,8 @@
+/**
+ * When a UserNotFoundException is created, HTTP code 404 (NOT FOUND) is returned
+ * and the exception message is displayed
+ */
+
 package com.example.MarinerUserREST;
 
 import org.springframework.http.HttpStatus;

@@ -1,3 +1,7 @@
+/**
+ * Exception called when user cannot be found
+ */
+
 package com.example.MarinerUserREST;
 
 public class UserNotFoundException extends RuntimeException{
