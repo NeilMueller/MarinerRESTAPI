@@ -112,7 +112,7 @@ public class UserController {
         UserObject user = repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         if(user.getPermissionType() == UserObject.PERMISSIONLEVELZERO){
-            user.setPermissionType(UserObject.PERMISSIONLEVELONE);
+            user.grantPermission();
             return ResponseEntity.ok(assembler.toModel(repository.save(user)));
         }
 
@@ -137,7 +137,7 @@ public class UserController {
         UserObject user = repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         if(user.getPermissionType() == UserObject.PERMISSIONLEVELONE){
-            user.setPermissionType(UserObject.PERMISSIONLEVELZERO);
+            user.revokePermission();
             return ResponseEntity.ok(assembler.toModel(repository.save(user)));
         }
 

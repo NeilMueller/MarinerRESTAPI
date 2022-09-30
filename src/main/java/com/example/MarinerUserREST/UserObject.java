@@ -37,6 +37,19 @@ public class UserObject {
         this.permissionGrantedDate = new Date(millis);
     }
 
+    public void grantPermission(){
+        permissionType = UserObject.PERMISSIONLEVELONE;
+        long millis = System.currentTimeMillis();
+        permissionGrantedDate = new Date(millis);
+    }
+
+    public void revokePermission(){
+        permissionType = UserObject.PERMISSIONLEVELZERO;
+        long millis = System.currentTimeMillis();
+        permissionGrantedDate = new Date(millis);
+    }
+
+
     @Override
     public boolean equals(Object o){
         if(this == o) return true;
