@@ -11,4 +11,6 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<UserObject, Long> {
     List<UserObject> findByFamilyNameIs(String lastName);
+    List<UserObject> findByEmail(String email);
+
 }

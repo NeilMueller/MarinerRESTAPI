@@ -70,10 +70,21 @@ public class UserController {
      */
     @PostMapping("/users")
     ResponseEntity<?> newUser(@RequestBody UserObject newUser){
-        EntityModel<UserObject> entityModel = assembler.toModel(repository.save(newUser));
-        return ResponseEntity
-                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(entityModel);
+        List<UserObject> userWithEmail = repository.findByEmail(newUser.getEmail());
+        if(userWithEmail.isEmpty()){
+            EntityModel<UserObject> entityModel = assembler.toModel(repository.save(newUser));
+            return ResponseEntity
+                    .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                    .body(entityModel);
+        } else {
+            return ResponseEntity
+                    .status(HttpStatus.METHOD_NOT_ALLOWED)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
+                    .body(Problem.create()
+                            .withTitle("Method not allowed")
+                            .withDetail("User with email " + newUser.getEmail() + " is already saved"));
+        }
+
     }
 
     /**
