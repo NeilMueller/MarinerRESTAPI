@@ -1,3 +1,8 @@
+/**
+ * used to preload data for trouble shooting db
+ * make sure to uncomment drop n tables in application properties if you want to use this
+ * otherwise you will end up with duplicate data
+ */
 package com.example.MarinerUserREST;
 
 import org.slf4j.Logger;
@@ -17,8 +22,8 @@ public class LoadDatabase {
     @Bean
     CommandLineRunner initDatabase(UserRepository repository) {
         return args -> {
-            log.info("Preloading " + repository.save(new UserObject("Mueller", "Neil", "neil.mueller99@gmail.com", simpleDateFormat.parse("1999-11-01"),1)));
-            log.info("Preloading " + repository.save(new UserObject("Boyle", "Kyle", "kb@gmail.com", simpleDateFormat.parse("1980-01-01"),1)));
+            //log.info("Preloading " + repository.save(new UserObject("Mueller", "Neil", "neil.mueller99@gmail.com", simpleDateFormat.parse("1999-11-01"),1)));
+            //log.info("Preloading " + repository.save(new UserObject("Boyle", "Kyle", "kb@gmail.com", simpleDateFormat.parse("1980-01-01"),1)));
         };
     }
 }
