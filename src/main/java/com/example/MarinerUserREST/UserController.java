@@ -111,7 +111,7 @@ public class UserController {
     ResponseEntity<?> grantPermission(@PathVariable Long id) {
         UserObject user = repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        if(user.getPermissionType() == UserObject.PERMISSIONLEVELZERO){
+        if(user.getPermission().getPermissionType() == Permission.PERMISSIONLEVELZERO){
             user.grantPermission();
             return ResponseEntity.ok(assembler.toModel(repository.save(user)));
         }
@@ -121,7 +121,7 @@ public class UserController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .body(Problem.create()
                 .withTitle("Method not allowed")
-                .withDetail("User already has permission level " + user.getPermissionType()));
+                .withDetail("User already has permission level " + user.getPermission().getPermissionType()));
 
     }
 
@@ -136,7 +136,7 @@ public class UserController {
     ResponseEntity<?> revokePermission(@PathVariable Long id) {
         UserObject user = repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        if(user.getPermissionType() == UserObject.PERMISSIONLEVELONE){
+        if(user.getPermission().getPermissionType() == Permission.PERMISSIONLEVELONE){
             user.revokePermission();
             return ResponseEntity.ok(assembler.toModel(repository.save(user)));
         }
@@ -146,7 +146,7 @@ public class UserController {
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)
                 .body(Problem.create()
                         .withTitle("Method not allowed")
-                        .withDetail("User already has permission level " + user.getPermissionType()));
+                        .withDetail("User already has permission level " + user.getPermission().getPermissionType()));
     }
 
     /**

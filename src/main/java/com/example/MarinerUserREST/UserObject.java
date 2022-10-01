@@ -19,11 +19,7 @@ public class UserObject {
     private @Id @GeneratedValue Long id;
     private String familyName, givenName, email;
     private Date birthDate;
-    private int permissionType;
-    private Date permissionGrantedDate;
-
-    public static final int PERMISSIONLEVELZERO = 0;
-    public static final int PERMISSIONLEVELONE = 1;
+    private Permission permission;
 
     UserObject() {}
 
@@ -32,21 +28,15 @@ public class UserObject {
         this.givenName = givenName;
         this.email = email;
         this.birthDate = birthDate;
-        this.permissionType = permissionType;
-        long millis = System.currentTimeMillis();
-        this.permissionGrantedDate = new Date(millis);
+        permission = new Permission(permissionType);
     }
 
     public void grantPermission(){
-        permissionType = UserObject.PERMISSIONLEVELONE;
-        long millis = System.currentTimeMillis();
-        permissionGrantedDate = new Date(millis);
+        permission.grantPermission();
     }
 
     public void revokePermission(){
-        permissionType = UserObject.PERMISSIONLEVELZERO;
-        long millis = System.currentTimeMillis();
-        permissionGrantedDate = new Date(millis);
+        permission.revokePermission();
     }
 
 
@@ -71,8 +61,7 @@ public class UserObject {
                 ", givenName='" + givenName + '\'' +
                 ", email='" + email + '\'' +
                 ", birthDate=" + birthDate +
-                ", permissionType=" + permissionType +
-                ", permissionDateGranted" + permissionGrantedDate +
+                ", permissionType=" + permission.toString() +
                 '}';
     }
 
@@ -117,19 +106,11 @@ public class UserObject {
         this.birthDate = birthDate;
     }
 
-    public int getPermissionType() {
-        return permissionType;
+    public Permission getPermission() {
+        return permission;
     }
 
-    public void setPermissionType(int permissionType) {
-        this.permissionType = permissionType;
-    }
-
-    public Date getPermissionGrantedDate() {
-        return permissionGrantedDate;
-    }
-
-    public void setPermissionGrantedDate(Date permissionGrantedDate) {
-        this.permissionGrantedDate = permissionGrantedDate;
+    public void setPermission(Permission permission) {
+        this.permission = permission;
     }
 }

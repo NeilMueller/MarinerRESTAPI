@@ -26,7 +26,7 @@ public class UserModelAssembler implements RepresentationModelAssembler<UserObje
                 linkTo(methodOn(UserController.class).searchByFamilyName(entity.getFamilyName())).withRel("family"));
 
         //Add link to grant or revoke permission based on current permission type
-        if(entity.getPermissionType() == 0){
+        if(entity.getPermission().getPermissionType() == Permission.PERMISSIONLEVELZERO){
             userModel.add(linkTo(methodOn(UserController.class).grantPermission(entity.getId())).withRel("grant"));
         } else {
             userModel.add(linkTo(methodOn(UserController.class).revokePermission(entity.getId())).withRel("revoke"));
