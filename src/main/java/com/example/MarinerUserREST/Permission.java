@@ -1,9 +1,6 @@
 package com.example.MarinerUserREST;
 
 import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToOne;
 import java.util.Date;
 
 @Embeddable
