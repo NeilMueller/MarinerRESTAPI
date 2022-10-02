@@ -1,0 +1,27 @@
+List All users:
+curl -v localhost:8080/users
+
+Add new user:
+Anna:
+curl -v -X POST localhost:8080/users -H "Content-type:application/json" -d "{\"familyName\": \"Mueller\", \"givenName\": \"Anna\", \"email\": \"anna@gmail.com\", \"birthDate\":\"2001-06-11\", \"permission\":{\"permissionType\":0,\"permissionGrantedDate\":\"2022-10-01T15:45:23.412+00:00\"}}"
+
+Delete user:
+curl -X DELETE localhost:8080/users/3
+
+Find user by id:
+curl -v localhost:8080/users/1
+
+Grant permissions to user:
+curl -v -X PUT localhost:8080/users/1/grant
+
+Revoke permissions from user:
+curl -v -X PUT localhost:8080/users/1/revoke
+
+Search for users by family name:
+curl -v localhost:8080/users/familyName/Mueller
+
+NEIL:
+curl -v -X POST localhost:8080/users -H "Content-type:application/json" -d "{\"familyName\": \"Mueller\", \"givenName\": \"Neil\", \"email\": \"neil.mueller99@gmail.com\", \"birthDate\":\"1999-11-01\", \"permission\":{\"permissionType\":0,\"permissionGrantedDate\":\"2022-10-01T15:45:23.412+00:00\"}}"
+
+Kyle:
+curl -v -X POST localhost:8080/users -H "Content-type:application/json" -d "{\"familyName\": \"Boyle\", \"givenName\": \"Kyle\", \"email\": \"kb@gmail.com\", \"birthDate\":\"1985-01-01\", \"permission\":{\"permissionType\":1,\"permissionGrantedDate\":\"2022-10-01T15:45:23.412+00:00\"}}"
